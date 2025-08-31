@@ -1,0 +1,34 @@
+themes:
+  trust_breakdown:
+    label: "Vertrauensbruch / Misstrauensspirale"
+    narratives:
+      boundary_alignment: 0.1
+      attachment_insecurity: 0.1
+    primary_axes:
+      Misstrauen: 0.7
+      Defensive: 0.2
+
+  control_loop:
+    label: "Reaktive Kontrollschleife"
+    narratives:
+      reactive_control: 0.6
+      role_swap: 0.2
+    primary_axes:
+      Defensive: 0.2
+      Grenzsetzung: 0.1
+
+  transparency_build:
+    label: "Transparenzaufbau & Deeskalation"
+    narratives:
+      boundary_alignment: 0.2
+    primary_axes:
+      Transparenz: 0.6
+      Deeskalation: 0.4
+
+  ambivalence_field:
+    label: "Ambivalenzfeld (Undefiniertheit)"
+    narratives:
+      ambivalence_knot: 0.6
+    primary_axes:
+      Themenwechsel: 0.2
+      Misstrauen: 0.2

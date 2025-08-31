@@ -1,0 +1,39 @@
+version: "1.0"
+window:
+  messages: 30             # Auswertefenster pro Konfliktabschnitt (frei anpassbar)
+gating_conflict:
+  min_E_hits: 3            # Mindestens 3 E-Treffer im Fenster → "Konfliktkontext" gilt
+  context_markers_by_tag:  # optional; falls ihr per Tags mappt
+    - accusation
+    - distrust
+    - defensive
+  context_markers_explicit: []  # alternativ: explizite Marker-IDs
+absence_sets:
+  # Namen → Liste von Marker-IDs ODER Tags, die typ. im harten Streit auftreten
+  derogation:
+    tags: [derogation, contempt, insult]
+    ids: []
+  profanity:
+    tags: [profanity]
+    ids: []
+  threat:
+    tags: [threat, intimidation]
+    ids: []
+  ultimatum:
+    tags: [ultimatum]
+    ids: []
+  character_attack:
+    tags: [character_attack]
+    ids: []
+policy:
+  strict_zero: true        # 0 Treffer in der Abwesenheitsmenge erlaubt
+  tolerant_max: 1          # (nur relevant, wenn strict_zero:false)
+  min_tokens: 200          # Minimum Textmenge im Fenster zur Stabilisierung
+emit:
+  # Wir emittieren zwei Arten von Markern:
+  per_window: true         # gemeinsamer Meta-Marker ("beide Seiten hielten X zurück")
+  per_speaker: true        # pro Sprecher (wenn dieser im Fenster aktiv war und X unterlassen hat)
+weights:
+  base_score: 2.2          # Grundscore für Omissions-Marker (positiv, Deeskalation)
+  primary_axis: "Deeskalation"
+  tags_extra: ["omission", "self_regulation", "positiv"]

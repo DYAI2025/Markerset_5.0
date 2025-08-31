@@ -1,0 +1,93 @@
+- id: CLU_CONFLICT_WITH_SELF_REGULATION
+  version: "3.3"
+  lang: de
+  frame:
+    signal: ["Konflikt mit aktiver Selbstregulation"]
+    concept: "Cluster: Mehrere Omissionen + milde Regulatoren"
+    pragmatics: "Konfliktbearbeitung ohne Entgleisung"
+    narrative: "controlled_deescalation"
+  cluster:
+    require_any_context: ["CONFLICT_CONTEXT"]   # vom Detector gesetzt
+    require_all_meta:
+      - MEMA_ABSENCE_OF_DEROGATION_IN_CONFLICT
+      - MEMA_ABSENCE_OF_THREAT_IN_CONFLICT
+    optional_positive_markers:
+      - SEM_SUMMARIZE_AND_CHECK
+      - SEM_CLARIFY_INTENT
+      - ATO_BOUNDARY_NEGOTIATION
+  activation: { rule: "WINDOW_CLUSTER_AT_END" }
+  window: { messages: 30 }
+  scoring: { base: 2.8, weight: 0.75, decay: 0.0, formula: "linear" }
+  tags: [cluster, omission, Deeskalation, Transparenz, positiv]
+
+- id: CLU_CONFLICT_WITH_COMPREHENSIVE_RESTRAINT
+  version: "3.3"
+  lang: de
+  frame:
+    signal: ["Konflikt mit umfassender Zurückhaltung"]
+    concept: "Cluster: Vollständige Omissionen-Suite"
+    pragmatics: "Maximale Selbstkontrolle in Konfliktsituation"
+    narrative: "controlled_deescalation"
+  cluster:
+    require_any_context: ["CONFLICT_CONTEXT"]
+    require_all_meta:
+      - MEMA_ABSENCE_OF_DEROGATION_IN_CONFLICT
+      - MEMA_ABSENCE_OF_THREAT_IN_CONFLICT
+      - MEMA_ABSENCE_OF_CHARACTER_ATTACK_IN_CONFLICT
+      - MEMA_ABSENCE_OF_ULTIMATUM_IN_CONFLICT
+    optional_positive_markers:
+      - SEM_SUMMARIZE_AND_CHECK
+      - SEM_CLARIFY_INTENT
+      - ATO_BOUNDARY_NEGOTIATION
+      - SEM_I_MESSAGE
+  activation: { rule: "WINDOW_CLUSTER_AT_END" }
+  window: { messages: 30 }
+  scoring: { base: 3.2, weight: 0.85, decay: 0.0, formula: "linear" }
+  tags: [cluster, omission, Deeskalation, Transparenz, positiv, comprehensive]
+
+- id: CLU_CONFLICT_WITH_PARTIAL_RESTRAINT
+  version: "3.3"
+  lang: de
+  frame:
+    signal: ["Konflikt mit partieller Zurückhaltung"]
+    concept: "Cluster: Grundlegende Omissionen"
+    pragmatics: "Minimale Deeskalationsdisziplin"
+    narrative: "controlled_deescalation"
+  cluster:
+    require_any_context: ["CONFLICT_CONTEXT"]
+    require_any_meta:  # mindestens eine Omission
+      - MEMA_ABSENCE_OF_DEROGATION_IN_CONFLICT
+      - MEMA_ABSENCE_OF_THREAT_IN_CONFLICT
+      - MEMA_ABSENCE_OF_CHARACTER_ATTACK_IN_CONFLICT
+    min_meta_count: 2  # mindestens 2 verschiedene Omissionen
+    optional_positive_markers:
+      - SEM_SUMMARIZE_AND_CHECK
+      - ATO_BOUNDARY_NEGOTIATION
+  activation: { rule: "WINDOW_CLUSTER_AT_END" }
+  window: { messages: 30 }
+  scoring: { base: 2.4, weight: 0.65, decay: 0.0, formula: "linear" }
+  tags: [cluster, omission, Deeskalation, positiv, partial]
+
+- id: CLU_SPEAKER_EXEMPLARY_RESTRAINT
+  version: "3.3"
+  lang: de
+  frame:
+    signal: ["Sprecher zeigt vorbildliche Zurückhaltung"]
+    concept: "Cluster: Per-Speaker Omissionen + positive Marker"
+    pragmatics: "Individuelle Vorbildfunktion im Konflikt"
+    narrative: "controlled_deescalation"
+  cluster:
+    require_any_context: ["CONFLICT_CONTEXT"]
+    require_all_meta:
+      - MEMA_SPKR_ABSENCE_OF_DEROGATION_IN_CONFLICT
+      - MEMA_SPKR_ABSENCE_OF_THREAT_IN_CONFLICT
+    optional_positive_markers:
+      - SEM_I_MESSAGE
+      - SEM_CLARIFY_INTENT
+      - ATO_BOUNDARY_NEGOTIATION
+      - SEM_VALIDATION_OF_FEELING
+    per_speaker: true  # wird pro Sprecher einzeln ausgewertet
+  activation: { rule: "WINDOW_CLUSTER_AT_END" }
+  window: { messages: 30 }
+  scoring: { base: 2.0, weight: 0.55, decay: 0.0, formula: "linear" }
+  tags: [cluster, omission, Deeskalation, positiv, per_speaker, exemplary]

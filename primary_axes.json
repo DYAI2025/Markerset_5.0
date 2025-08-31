@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "config_type": "LeanDeep_3.3_Primary_Axes_Configuration",
+    "generated_at": "2025-08-19T03:16:06.101580",
+    "version": "3.3.0"
+  },
+  "primary_axes": [
+    {
+      "name": "Neediness-Autonomy",
+      "positive_pole": "Excessive neediness and dependency",
+      "negative_pole": "Healthy autonomy and self-reliance",
+      "primary_markers": [
+        "CLU_NEEDINESS_GUILT_BIND",
+        "CLU_REASSURANCE_SEEKING_LOOP",
+        "ATO_HELPLESSNESS_DEPENDENCY",
+        "SEM_PERFORMATIVE_HELPLESSNESS"
+      ]
+    },
+    {
+      "name": "Guilt-Manipulation vs Authentic Communication",
+      "positive_pole": "Guilt-based manipulation patterns",
+      "negative_pole": "Direct, authentic communication",
+      "primary_markers": [
+        "ATO_GUILT_APPEAL_SUPPORT",
+        "SEM_GUILT_APPEAL_NEEDINESS",
+        "SEM_VICTIM_OFFENDER_REVERSAL"
+      ]
+    },
+    {
+      "name": "Conflict-Avoidance vs Direct Engagement",
+      "positive_pole": "Conflict avoidance through manipulation",
+      "negative_pole": "Direct, constructive conflict engagement",
+      "primary_markers": [
+        "ATO_DISCLAIMER_NOT_BURDEN",
+        "SEM_DOUBLE_BIND_DISCLAIMER_BUT",
+        "MEMA_ABSENCE_OF_DEROGATION_IN_CONFLICT",
+        "MEMA_ABSENCE_OF_THREAT_IN_CONFLICT"
+      ]
+    },
+    {
+      "name": "Boundary-Respect vs Boundary-Violation",
+      "positive_pole": "Boundary violations and pressure",
+      "negative_pole": "Healthy boundary respect",
+      "primary_markers": [
+        "ATO_BOUNDARY_NEGOTIATION",
+        "ATO_YOUR_FAULT_PHRASE",
+        "ATO_COLD_LABEL"
+      ]
+    }
+  ]
+}
