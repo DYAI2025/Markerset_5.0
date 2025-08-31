@@ -1,0 +1,161 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://leandep.ai/schemas/leandep34.schema.json",
+  "title": "LeanDeep 3.4 Marker Schema",
+  "description": "Schema for LeanDeep 3.4 markers (ATO, SEM, MEMA, CLU) with CLU_INTUITION support",
+  "type": "object",
+  "required": ["id", "schema_version", "lang", "category"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^(ATO|SEM|MEMA|CLU)_[A-Z0-9_]+$",
+      "description": "Unique marker identifier with category prefix"
+    },
+    "schema_version": {
+      "type": "string",
+      "enum": ["LD-3.4"],
+      "description": "Schema version"
+    },
+    "lang": {
+      "type": "string",
+      "enum": ["en", "de"],
+      "description": "Language code"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["ATOMIC", "SEMANTIC", "MEMA", "CLUSTER"],
+      "description": "Marker category"
+    },
+    "description": {
+      "type": "string",
+      "description": "Human-readable description"
+    },
+    "frame": {
+      "type": "object",
+      "properties": {
+        "signal": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "concept": {"type": "string"},
+        "pragmatics": {"type": "string"},
+        "narrative": {"type": "string"}
+      }
+    },
+    "pattern": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Regex patterns for ATO markers"
+    },
+    "composed_of": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "List of component marker IDs"
+    },
+    "criteria": {
+      "type": "string",
+      "description": "Activation criteria for MEMA markers"
+    },
+    "activation_logic": {
+      "type": "string",
+      "description": "Activation logic (e.g., 'ANY 2', 'ALL')"
+    },
+    "window": {
+      "type": "object",
+      "properties": {
+        "messages": {"type": "integer"},
+        "time_ms": {"type": "integer"}
+      }
+    },
+    "examples": {
+      "type": "array",
+      "items": {"type": "string"},
+      "minItems": 5,
+      "description": "At least 5 examples required"
+    },
+    "tags": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata for CLU_INTUITION markers",
+      "properties": {
+        "intuition": {
+          "type": "object",
+          "properties": {
+            "family": {
+              "type": "string",
+              "enum": ["grief", "conflict", "support", "commitment", "uncertainty"]
+            },
+            "activation": {
+              "type": "object",
+              "properties": {
+                "window": {"type": "integer"},
+                "rule": {"type": "string"},
+                "confirm_window": {"type": "integer"},
+                "confirm_targets": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                },
+                "decay_threshold": {"type": "number"},
+                "decay_period": {"type": "integer"}
+              }
+            },
+            "runtime": {
+              "type": "object",
+              "properties": {
+                "multiplier": {"type": "number"},
+                "multiplier_ttl": {"type": "integer"},
+                "cooldown": {"type": "integer"}
+              }
+            },
+            "telemetry": {
+              "type": "object",
+              "properties": {
+                "confirmed": {"type": "integer"},
+                "retracted": {"type": "integer"},
+                "ewma_precision": {"type": "number"}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"category": {"const": "ATOMIC"}}},
+      "then": {
+        "required": ["pattern", "examples"],
+        "properties": {
+          "pattern": {"minItems": 1}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"category": {"const": "SEMANTIC"}}},
+      "then": {
+        "required": ["composed_of", "activation_logic", "examples"],
+        "properties": {
+          "composed_of": {
+            "minItems": 2,
+            "items": {"pattern": "^ATO_"}
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"category": {"const": "MEMA"}}},
+      "then": {
+        "required": ["criteria", "composed_of", "examples"],
+        "properties": {
+          "composed_of": {
+            "minItems": 1,
+            "items": {"pattern": "^(CLU_|SEM_)"}
+          }
+        }
+      }
+    }
+  ]
+}

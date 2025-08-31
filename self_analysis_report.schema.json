@@ -1,0 +1,423 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://leandeep.ai/schemas/self_analysis_report_v3.4.json",
+  "title": "SelfAnalysisReport v3.4",
+  "description": "JSON Schema for deep personality analysis reports using Lean-Deep 3.4 marker hierarchy",
+  "type": "object",
+  "required": [
+    "report_id",
+    "schema_version", 
+    "source",
+    "transcript",
+    "markers",
+    "meta"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this analysis report"
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "LD-3.4",
+      "description": "Schema version identifier"
+    },
+    "source": {
+      "type": "object",
+      "required": ["type", "lang"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["audio", "text", "video"],
+          "description": "Input data type"
+        },
+        "lang": {
+          "type": "string",
+          "enum": ["de", "en", "fr", "es"],
+          "description": "Primary language of content"
+        },
+        "duration_sec": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Duration in seconds for audio/video sources"
+        },
+        "file_size_mb": {
+          "type": "number",
+          "minimum": 0,
+          "description": "File size in megabytes"
+        }
+      }
+    },
+    "transcript": {
+      "type": "object",
+      "required": ["text"],
+      "properties": {
+        "text": {
+          "type": "string",
+          "description": "Full transcript text"
+        },
+        "words": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["w", "start", "end"],
+            "properties": {
+              "w": {"type": "string", "description": "Word text"},
+              "start": {"type": "number", "description": "Start time in seconds"},
+              "end": {"type": "number", "description": "End time in seconds"},
+              "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          }
+        }
+      }
+    },
+    "paralinguistics": {
+      "type": "object",
+      "properties": {
+        "tempo_wpm": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Words per minute"
+        },
+        "pause_events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["t", "dur_ms"],
+            "properties": {
+              "t": {"type": "number", "description": "Timestamp in seconds"},
+              "dur_ms": {"type": "number", "description": "Duration in milliseconds"}
+            }
+          }
+        },
+        "disfluencies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "t"],
+            "properties": {
+              "type": {"type": "string", "enum": ["uh", "um", "er", "ah", "stutter", "restart"]},
+              "t": {"type": "number", "description": "Timestamp in seconds"}
+            }
+          }
+        },
+        "laughter": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["t"],
+            "properties": {
+              "t": {"type": "number", "description": "Timestamp in seconds"},
+              "intensity": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          }
+        },
+        "prosody_summary": {
+          "type": "object",
+          "properties": {
+            "pitch_var": {"type": "number", "minimum": 0, "description": "Pitch variation coefficient"},
+            "energy_var": {"type": "number", "minimum": 0, "description": "Energy variation coefficient"},
+            "stress_pattern": {"type": "string", "description": "Overall stress pattern description"}
+          }
+        }
+      }
+    },
+    "nlp_enrichment": {
+      "type": "object",
+      "properties": {
+        "sentiment": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["span", "score"],
+            "properties": {
+              "span": {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2},
+              "score": {"type": "number", "minimum": -1, "maximum": 1},
+              "label": {"type": "string", "enum": ["positive", "negative", "neutral"]}
+            }
+          }
+        },
+        "ner": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["span", "label"],
+            "properties": {
+              "span": {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2},
+              "label": {"type": "string", "enum": ["PERSON", "ORG", "LOC", "MISC", "TIME", "EMOTION"]},
+              "text": {"type": "string"},
+              "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          }
+        },
+        "negation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["span"],
+            "properties": {
+              "span": {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2},
+              "scope": {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2}
+            }
+          }
+        }
+      }
+    },
+    "markers": {
+      "type": "object",
+      "required": ["ATO", "SEM", "CLU", "MEMA"],
+      "properties": {
+        "ATO": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "ranges", "score"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^ATO_[A-Z_]+$"},
+              "ranges": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["start", "end"],
+                  "properties": {
+                    "start": {"type": "integer", "minimum": 0},
+                    "end": {"type": "integer", "minimum": 0}
+                  }
+                }
+              },
+              "score": {"type": "number", "minimum": 0},
+              "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          }
+        },
+        "SEM": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "composed_of", "activation", "ranges", "score"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^SEM_[A-Z_]+$"},
+              "composed_of": {
+                "type": "array",
+                "items": {"type": "string", "pattern": "^ATO_[A-Z_]+$"},
+                "minItems": 2
+              },
+              "activation": {
+                "type": "object",
+                "properties": {
+                  "logic": {"type": "string"},
+                  "window": {"type": "integer", "minimum": 1},
+                  "threshold": {"type": "number", "minimum": 0}
+                }
+              },
+              "ranges": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["start", "end"],
+                  "properties": {
+                    "start": {"type": "integer", "minimum": 0},
+                    "end": {"type": "integer", "minimum": 0}
+                  }
+                }
+              },
+              "score": {"type": "number", "minimum": 0}
+            }
+          }
+        },
+        "CLU": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "composed_of", "activation", "score"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^CLU_[A-Z_]+$"},
+              "composed_of": {
+                "type": "array",
+                "items": {"type": "string", "pattern": "^(SEM_|CLU_)[A-Z_]+$"},
+                "minItems": 1
+              },
+              "activation": {
+                "type": "object",
+                "properties": {
+                  "logic": {"type": "string"},
+                  "window": {"type": "integer", "minimum": 1},
+                  "threshold": {"type": "number", "minimum": 0},
+                  "decay": {"type": "number", "minimum": 0, "maximum": 1}
+                }
+              },
+              "score": {"type": "number", "minimum": 0},
+              "timeline": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "timestamp": {"type": "number"},
+                    "density": {"type": "number", "minimum": 0, "maximum": 1}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "MEMA": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "composed_of", "score"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^MEMA_[A-Z_]+$"},
+              "composed_of": {
+                "type": "array",
+                "items": {"type": "string", "pattern": "^(CLU_|SEM_)[A-Z_]+$"},
+                "minItems": 1
+              },
+              "score": {"type": "number", "minimum": 0},
+              "criteria": {"type": "string"},
+              "persistence": {
+                "type": "object",
+                "properties": {
+                  "duration_hours": {"type": "number", "minimum": 0},
+                  "frequency": {"type": "number", "minimum": 0, "maximum": 1},
+                  "stability": {"type": "number", "minimum": 0, "maximum": 1}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "explainability": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["marker_id", "why"],
+        "properties": {
+          "marker_id": {"type": "string"},
+          "why": {
+            "type": "object",
+            "required": ["rules", "features", "offsets"],
+            "properties": {
+              "rules": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "features": {
+                "type": "object",
+                "additionalProperties": {"type": "number"}
+              },
+              "offsets": {
+                "type": "array",
+                "items": {"type": "integer"}
+              },
+              "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+            }
+          }
+        }
+      }
+    },
+    "personality_insights": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["axis", "evidence", "score", "rationale"],
+        "properties": {
+          "axis": {
+            "type": "string",
+            "enum": [
+              "Bindungssicherheit",
+              "Konfliktstil: indirekt ↔ direkt",
+              "Selbstreflexion",
+              "Emotionale Regulation",
+              "Kommunikationsstil",
+              "Grenzensetzung",
+              "Validierungsabhängigkeit"
+            ]
+          },
+          "evidence": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "score": {"type": "number", "minimum": -1, "maximum": 1},
+          "rationale": {"type": "string"},
+          "stability": {"type": "number", "minimum": 0, "maximum": 1},
+          "development_trend": {"type": "string", "enum": ["improving", "stable", "declining", "unclear"]}
+        }
+      }
+    },
+    "timeline": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["index", "density"],
+        "properties": {
+          "index": {"type": "integer", "minimum": 0},
+          "density": {"type": "number", "minimum": 0, "maximum": 1},
+          "dominant_markers": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "emotional_state": {"type": "string"}
+        }
+      }
+    },
+    "cooccurrence": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "category", "frequency"],
+            "properties": {
+              "id": {"type": "string"},
+              "category": {"type": "string", "enum": ["ATO", "SEM", "CLU", "MEMA"]},
+              "frequency": {"type": "number", "minimum": 0},
+              "centrality": {"type": "number", "minimum": 0}
+            }
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["source", "target", "weight"],
+            "properties": {
+              "source": {"type": "string"},
+              "target": {"type": "string"},
+              "weight": {"type": "number", "minimum": 0},
+              "correlation": {"type": "number", "minimum": -1, "maximum": 1}
+            }
+          }
+        }
+      }
+    },
+    "meta": {
+      "type": "object",
+      "required": ["engine_version", "created_at"],
+      "properties": {
+        "engine_version": {"type": "string", "const": "3.3"},
+        "created_at": {"type": "string", "format": "date-time"},
+        "processing_time_ms": {"type": "number", "minimum": 0},
+        "marker_count": {
+          "type": "object",
+          "properties": {
+            "ATO": {"type": "integer", "minimum": 0},
+            "SEM": {"type": "integer", "minimum": 0},
+            "CLU": {"type": "integer", "minimum": 0},
+            "MEMA": {"type": "integer", "minimum": 0}
+          }
+        },
+        "quality_metrics": {
+          "type": "object",
+          "properties": {
+            "transcript_confidence": {"type": "number", "minimum": 0, "maximum": 1},
+            "marker_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+            "coherence_score": {"type": "number", "minimum": 0, "maximum": 1}
+          }
+        }
+      }
+    }
+  }
+}
